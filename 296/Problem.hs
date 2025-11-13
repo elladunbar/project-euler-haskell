@@ -1,6 +1,7 @@
 vecLength :: (Double, Double) -> Double
 vecLength (x, y) = sqrt (x * x + y * y)
 
+-- get valid side lengths according to problem
 triangleSides :: Int -> [(Int, Int, Int)]
 triangleSides maxPerimeter =
     [ (bc, ac, ab)
@@ -12,16 +13,14 @@ triangleSides maxPerimeter =
     , bc + ac > ab
     ]
 
--- bc ac ab -> a b c
+-- BC AC AB -> pA pB pC
 sidesToPoints :: (Int, Int, Int) -> ((Double, Double), (Double, Double), (Double, Double))
 sidesToPoints (bc, ac, ab) = ((-ac_x, ac_y), (fromIntegral ab - ac_x, ac_y), (0.0, 0.0))
   where
     ac_x = (((fromIntegral ac * fromIntegral ac - fromIntegral bc * fromIntegral bc) / fromIntegral ab) + fromIntegral ab) / 2.0
     ac_y = sqrt (fromIntegral ac * fromIntegral ac - ac_x * ac_x)
 
-abc :: ((Double, Double), (Double, Double), (Double, Double)) -> Double
-abc ((a_x, a_y), (b_x, b_y), (c_x, c_y)) = acos ((a_x * b_x + a_y * b_y) / (vecLength (a_x, a_y) * vecLength (b_x, b_y)))
-
+-- angle bisector of vA and vB
 k :: ((Double, Double), (Double, Double)) -> (Double, Double)
 k ((a_x, a_y), (b_x, b_y)) = (b_len * a_x + a_len * b_x, b_len * a_y + a_len * b_y)
   where
@@ -31,5 +30,4 @@ k ((a_x, a_y), (b_x, b_y)) = (b_len * a_x + a_len * b_x, b_len * a_y + a_len * b
 main = do
     print $ triangleSides 5
     print $ map sidesToPoints $ triangleSides 5
-    print $ map (abc . sidesToPoints) $ triangleSides 5
     print $ map ((\((a_x, a_y), (b_x, b_y), (c_x, c_y)) -> k ((a_x, a_y), (b_x, b_y))) . sidesToPoints) (triangleSides 5)
